@@ -12,8 +12,18 @@ def handle_first_command(message):
     markup.add(math)
     bot.send_message(message.chat.id, "Выберите режим бота:", reply_markup=markup)
 
+@bot.message_handler(regexp='Математика')
+def handle_math_message(message):
+    markup = types.ReplyKeyboardRemove(selective=False)
+    sent = bot.send_message(message.chat.id, "Я могу посчитать корни квадратного уравнения. Введите коэффициенты a, b и c через пробел."
+                                      "Не забывайте про знаки! Если число отрицательное, то ставится -(тире)."
+                                      "Если число положительное, то ничего не ставится.", reply_markup=markup)
+    bot.register_next_step_handler(sent, handle_message_with_numbers)
+
 def handle_message_with_numbers(message):
-    arguments = message.getText.split(" ")
+    arguments = message.text.split(" ")
+    bot.send_message(message.chat.id, logic.count_equality(float(arguments[0]), float(arguments[1]), float(arguments[2])))
+
 def polling():
     bot.polling(none_stop=True)
 
