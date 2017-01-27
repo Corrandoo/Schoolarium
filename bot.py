@@ -4,6 +4,14 @@ import telebot, config, logic, parse_manager
 
 bot = telebot.TeleBot(config.token)
 translate_type = ''
+@bot.message_handler(regexp='На главную')
+def handle_to_main(message):
+    markup = types.ReplyKeyboardMarkup()
+    math = types.KeyboardButton('Математика')
+    languages = types.KeyboardButton('Перевод')
+    markup.add(math)
+    markup.add(languages)
+    bot.send_message(message.chat.id, "Выберите режим бота:", reply_markup=markup)
 @bot.message_handler(commands=["start"])
 def handle_first_command(message):
     bot.send_message(message.chat.id, "Добрый день! Управление ботом очень простое: просто выберите нужную Вам опцию и нажмите на нее.")
@@ -61,8 +69,10 @@ def handle_start_translate_message(message):
     en_ru = types.KeyboardButton('Англо-Русский')
     ru_fr = types.KeyboardButton('Русско-Французский')
     fr_ru = types.KeyboardButton('Французско-Русский')
+    to_main = types.KeyboardButton('На главную')
     markup.row(ru_en, en_ru)
     markup.row(ru_fr, fr_ru)
+    markup.row(to_main)
     sent = bot.send_message(message.chat.id, "Выберите режим перевода", reply_markup=markup)
     bot.register_next_step_handler(sent, handle_type_translation)
 def handle_type_translation(message):
@@ -77,10 +87,15 @@ def handle_type_translation(message):
         translate_type = 'ru-fr'
     else:
         translate_type = 'fr-ru'
-    sent = bot.send_message(message.chat.id, 'Вы выбрали ' + get_type + ' перевод. Введите текст перевода.', markup)
+    sent = bot.send_message(message.chat.id, 'Вы выбрали ' + get_type + ' перевод. Введите текст перевода.', reply_markup=markup)
     bot.register_next_step_handler(sent, translate)
 def translate(message):
-    bot.send_message(message.chat.id, parse_manager.translate_yandex(message.text, translate_type))
+    markup = types.ReplyKeyboardMarkup()
+    translate = types.KeyboardButton('Перевод')
+    to_main = types.KeyboardButton('На главную')
+    markup.row(translate, to_main)
+
+    bot.send_message(message.chat.id, parse_manager.translate_yandex(message.text, translate_type), reply_markup=markup)
 def polling():
     bot.polling(none_stop=True)
 
