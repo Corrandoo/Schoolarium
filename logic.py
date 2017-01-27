@@ -10,3 +10,9 @@ def count_equality(a, b, c):
         return "Дискриминант равен 0. Корень уравнения: " + str(x) + "."
     elif d < 0:
         return "Дискриминант равен " + str(d) + ". Уравнение не имеет действительных корней."
+
+def calculate(s):
+    s.replace('s', 'sqrt')
+    if s.find('**') != -1 and len(s) > 10:
+        return False
+    return eval(s)
