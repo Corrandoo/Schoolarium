@@ -21,8 +21,11 @@ def handle_math_message(message):
     bot.register_next_step_handler(sent, handle_message_with_numbers)
 
 def handle_message_with_numbers(message):
-    arguments = message.text.split(" ")
-    bot.send_message(message.chat.id, logic.count_equality(float(arguments[0]), float(arguments[1]), float(arguments[2])))
+    try:
+        arguments = message.text.split(" ")
+        bot.send_message(message.chat.id, logic.count_equality(float(arguments[0]), float(arguments[1]), float(arguments[2])))
+    except:
+        pass
 
 def polling():
     bot.polling(none_stop=True)
